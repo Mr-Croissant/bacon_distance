@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 setup(
-    name="Bacon Distance",
+    name="bacon",
     version="1.0",
     description="bacon distance",
     author="Ely",
