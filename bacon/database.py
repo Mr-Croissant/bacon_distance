@@ -1,4 +1,5 @@
 import sqlite3
+from pathlib import Path
 
 
 def check_pass(username: str, password_attempt: str, conn: sqlite3.Connection):
@@ -62,15 +63,23 @@ def user_exists(username: str, conn: sqlite3.Connection):
     return result
 
 
-def add_user(username: str, password: str, conn: sqlite3.Connection):
+def add_actor(actor_id: int, actor_name: str, conn: sqlite3.Connection):
     try:
         cur = conn.cursor()
-        data = (username, password, 1200)
-        cur.execute("INSERT INTO chess_users VALUES(?, ?, ?)", data)
+        data = (actor_id, actor_name)
+        cur.execute("INSERT INTO actors VALUES(?, ?)", data)
         conn.commit()
     except Exception as e:
         print(f"An error occurred: {e}")
 
+def add_movie(movie_id: int, movie_name: str, conn: sqlite3.Connection):
+    try:
+        cur = conn.cursor()
+        data = (movie_id, movie_name)
+        cur.execute("INSERT INTO actors VALUES(?, ?)", data)
+        conn.commit()
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 def set_ELO(username: str, new_ELO: int, conn: sqlite3.Connection):
     try:
@@ -90,3 +99,31 @@ def get_top_5_players(conn: sqlite3.Connection):
     except Exception as e:
         print(f"An error occurred: {e}")
         return []
+
+
+def initialize_connection() -> sqlite3.Connection:
+    conn = sqlite3.connect(Path(__file__).parents[1] / "bacon_distance.db", check_same_thread=False)
+    cursor = conn.cursor()
+    cursor.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS actors (
+            id INTEGER PRIMARY KEY,
+            full_name VARCHAR(60)
+        );
+        CREATE TABLE IF NOT EXISTS movies (
+            id INTEGER PRIMARY KEY,
+            movie_name VARCHAR(60)
+        );
+        CREATE TABLE if not exists actor_to_movie (
+            actor_id INTEGER,
+            movie_id INTEGER, 
+            PRIMARY KEY (actor_id, movie_id),
+            FOREIGN KEY (actor_id) REFERENCES actors(id),
+            FOREIGN KEY (movie_id) REFERENCES movies(id)
+        );
+        """
+    )
+    return conn
+
+initialize_connection()
+
