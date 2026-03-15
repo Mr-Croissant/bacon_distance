@@ -52,16 +52,12 @@ def get_actors_one_degree_away(actor_id: int, conn: sqlite3.Connection) -> List[
         cur.execute("""
             SELECT m1.actor_id
             FROM actor_to_movie m1
-            INNER JOIN (
-                SELECT actor_id
-                FROM actor_to_movie
-                GROUP BY actor_id
-            ) m2 ON m1.actor_id = m2.actor_id;
-""")
+            JOIN actor_to_movie as m2 ON m2.actor_id = ?;
+""", (actor_id, ))
         results = cur.fetchall()
         results = [result[0] for result in results]
         results.remove(actor_id)
-        return results.rem
+        return results
     except Exception as e:
         print(f"An error occurred: {e}")
 
