@@ -1,6 +1,5 @@
 import sqlite3
 from pathlib import Path
-from typing import Optional
 
 
 def get_actor_name(actor_id, conn: sqlite3.Connection):
@@ -80,7 +79,7 @@ def initialize_connection() -> sqlite3.Connection:
         );
         CREATE TABLE if not exists actor_to_movie (
             actor_id INTEGER,
-            movie_id INTEGER, 
+            movie_id INTEGER,
             PRIMARY KEY (actor_id, movie_id),
             FOREIGN KEY (actor_id) REFERENCES actors(id),
             FOREIGN KEY (movie_id) REFERENCES movies(id)

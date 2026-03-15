@@ -7,7 +7,6 @@ from bacon.database import (
     add_actor_in_movie,
     add_movie,
     initialize_connection,
-    reset_tables,
 )
 
 conn = initialize_connection()
