@@ -52,8 +52,14 @@ def get_actors_one_degree_away(actor_id: int, conn: sqlite3.Connection) -> List[
         cur.execute("""
             SELECT m1.actor_id
             FROM actor_to_movie m1
-            JOIN actor_to_movie as m2 ON m2.actor_id = ?;
-""", (actor_id, ))
+            INNER JOIN (
+                SELECT actor_id
+                FROM actor_to_movie
+                GROUP BY actor_id
+                HAVING COUNT(column_name) > 1
+            ) m2 ON m2.actor_id = ?;
+""", 
+(actor_id, ))
         results = cur.fetchall()
         results = [result[0] for result in results]
         results.remove(actor_id)
