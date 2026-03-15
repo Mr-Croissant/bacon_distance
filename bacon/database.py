@@ -1,5 +1,6 @@
 import sqlite3
 from pathlib import Path
+from typing import List
 
 
 def get_actor_name(actor_id, conn: sqlite3.Connection):
@@ -44,6 +45,26 @@ def add_actor(actor_id: int, actor_name: str, conn: sqlite3.Connection):
         print(f"An error occurred: {e}")
 
 
+
+def get_actors_one_degree_away(actor_id: int, conn: sqlite3.Connection) -> List[int]:
+    cur = conn.cursor()
+    try:
+        cur.execute("""
+            SELECT m1.actor_id
+            FROM actor_to_movie m1
+            INNER JOIN (
+                SELECT actor_id
+                FROM actor_to_movie
+                GROUP BY actor_id
+            ) m2 ON m1.actor_id = m2.actor_id;
+""")
+        results = cur.fetchall()
+        results = [result[0] for result in results]
+        results.remove(actor_id)
+        return results.rem
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 def add_movie(movie_id: int, movie_name: str, conn: sqlite3.Connection):
     cur = conn.cursor()
     try:
@@ -65,7 +86,7 @@ def add_actor_in_movie(actor_id: int, movie_id: int, conn: sqlite3.Connection):
 
 
 def initialize_connection() -> sqlite3.Connection:
-    conn = sqlite3.connect(Path(__file__).parents[1] / "bacon_distance.db", check_same_thread=False)
+    conn = sqlite3.connect(Path(__file__).parents[1] / "test.db", check_same_thread=False)
     cursor = conn.cursor()
     cursor.executescript(
         """
