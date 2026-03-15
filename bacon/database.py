@@ -2,104 +2,58 @@ import sqlite3
 from pathlib import Path
 
 
-def check_pass(username: str, password_attempt: str, conn: sqlite3.Connection):
-    if user_exists(username, conn):
+
+def get_actor_name(actor_id, conn: sqlite3.Connection):
+    if actor_exists(actor_id, conn):
         cur = conn.cursor()
-        cur.execute("SELECT password FROM chess_users WHERE username = ?", (username,))
+        cur.execute("SELECT ELO FROM actors WHERE id = ?", (actor_id,))
         result = cur.fetchone()[0]
-        return result == password_attempt
+        return result
+    return
+
+def get_movie_name(movie_id, conn: sqlite3.Connection):
+    if movie_exists(movie_id, conn):
+        cur = conn.cursor()
+        cur.execute("SELECT ELO FROM movies WHERE id = ?", (movie_id,))
+        result = cur.fetchone()[0]
+        return result
     return
 
 
-def get_ELO(username, conn: sqlite3.Connection):
-    if user_exists(username, conn):
-        cur = conn.cursor()
-        cur.execute("SELECT ELO FROM chess_users WHERE username = ?", (username,))
-        result = cur.fetchone()[0]
-        return int(result)
-    return
-
-
-def update_username(old_username: str, new_username: str, conn: sqlite3.Connection):
-    try:
-        cur = conn.cursor()
-        cur.execute(
-            "UPDATE chess_users SET username = ? WHERE username = ?",
-            (new_username, old_username),
-        )
-        conn.commit()
-        print(f"Username updated from '{old_username}' to '{new_username}'.")
-        return "Success"
-    except Exception as e:
-        print(f"An error occurred while updating username: {e}")
-        return "Failure"
-
-
-def update_password(username: str, new_password: str, conn: sqlite3.Connection):
-    try:
-        cur = conn.cursor()
-        cur.execute(
-            "UPDATE chess_users SET password = ? WHERE username = ?",
-            (new_password, username),
-        )
-        conn.commit()
-        print(f"Password for {username} updated to '{new_password}'.")
-        return "Success"
-    except Exception as e:
-        print(f"An error occurred while updating username: {e}")
-        return "Failure"
-
-
-def valid_pass(password: str):
-    if password.isalnum():
-        return True
-    return False
-
-
-def user_exists(username: str, conn: sqlite3.Connection):
+def actor_exists(actor_id: str, conn: sqlite3.Connection):
     cur = conn.cursor()
-    cur.execute("SELECT 1 FROM chess_users WHERE username = ?", (username,))
-    result = cur.fetchone()
+    cur.execute("SELECT 1 FROM actors WHERE id = ?", (actor_id,))
+    result = cur.fetchone()[0]
+    return result
+
+def movie_exists(movie_id: str, conn: sqlite3.Connection):
+    cur = conn.cursor()
+    cur.execute("SELECT 1 FROM movies WHERE id = ?", (movie_id,))
+    result = cur.fetchone()[0]
     return result
 
 
-def add_actor(actor_id: int, actor_name: str, conn: sqlite3.Connection):
+def add_actor(actor_id: int, actor_name: str, cur: sqlite3.Cursor):
     try:
-        cur = conn.cursor()
         data = (actor_id, actor_name)
         cur.execute("INSERT INTO actors VALUES(?, ?)", data)
-        conn.commit()
     except Exception as e:
         print(f"An error occurred: {e}")
 
-def add_movie(movie_id: int, movie_name: str, conn: sqlite3.Connection):
+
+def add_movie(movie_id: int, movie_name: str, cur: sqlite3.Cursor):
     try:
-        cur = conn.cursor()
         data = (movie_id, movie_name)
-        cur.execute("INSERT INTO actors VALUES(?, ?)", data)
-        conn.commit()
+        cur.execute("INSERT INTO movies VALUES(?, ?)", data)
     except Exception as e:
         print(f"An error occurred: {e}")
 
-def set_ELO(username: str, new_ELO: int, conn: sqlite3.Connection):
+def add_actor_in_movie(actor_id: int, movie_id: int, cur: sqlite3.Cursor):
     try:
-        cur = conn.cursor()
-        cur.execute("UPDATE chess_users SET ELO = ? WHERE Username = ?", (new_ELO, username))
-        conn.commit()
+        data = (actor_id, movie_id)
+        cur.execute("INSERT INTO actor_to_movie VALUES(?, ?)", data)
     except Exception as e:
         print(f"An error occurred: {e}")
-
-
-def get_top_5_players(conn: sqlite3.Connection):
-    try:
-        cur = conn.cursor()
-        cur.execute("SELECT username, elo FROM chess_users ORDER BY elo DESC LIMIT 5")
-        top_players = cur.fetchall()
-        return top_players
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return []
-
 
 def initialize_connection() -> sqlite3.Connection:
     conn = sqlite3.connect(Path(__file__).parents[1] / "bacon_distance.db", check_same_thread=False)
@@ -125,5 +79,19 @@ def initialize_connection() -> sqlite3.Connection:
     )
     return conn
 
-initialize_connection()
 
+def reset_tables():
+    conn = sqlite3.connect(Path(__file__).parents[1] / "bacon_distance.db", check_same_thread=False)
+    cursor = conn.cursor()
+    cursor.executescript(
+        """
+        DROP TABLE actors;
+        DROP TABLE movies;
+        """
+    )
+
+conn = initialize_connection()
+cursor = conn.cursor()
+add_actor(1, "Ely", cursor)
+add_movie(1, "Pirates of the Carribiean", cursor)
+add_actor_in_movie(1, 1, cursor)
