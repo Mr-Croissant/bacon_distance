@@ -2,11 +2,18 @@ from pathlib import Path
 
 import pandas as pd
 
-from bacon.database import add_actor, add_actor_in_movie, initialize_connection, add_movie, reset_tables
+from bacon.database import (
+    add_actor,
+    add_actor_in_movie,
+    add_movie,
+    initialize_connection,
+    reset_tables,
+)
 
 conn = initialize_connection()
 
 datasets_path = Path(__file__).parent / "IMDB_dataset"
+
 
 def import_actors_to_db():
     database_path = datasets_path / "name.basics.tsv"
@@ -16,6 +23,7 @@ def import_actors_to_db():
             print("adding actor: ", actor_info["nconst"][2:], actor_info["primaryName"])
             add_actor(int(actor_info["nconst"][2:]), actor_info["primaryName"], conn)
 
+
 def import_movies_to_db():
     database_path = datasets_path / "title.basics.tsv"
     df = pd.read_csv(database_path, sep="\t", nrows=1000)
@@ -23,6 +31,7 @@ def import_movies_to_db():
         if movie_info["titleType"] == "movie":
             print("adding movie: ", movie_info["tconst"][2:], movie_info["primaryTitle"])
             add_movie(int(movie_info["tconst"][2:]), movie_info["primaryTitle"], conn)
+
 
 def import_actors_in_movies():
     database_path = datasets_path / "title.principals.tsv"
@@ -32,9 +41,11 @@ def import_actors_in_movies():
             print("adding relation: ", info["tconst"][2:], info["nconst"])
             add_actor_in_movie(int(info["nconst"][2:]), int(info["tconst"][2:]), conn)
 
+
 def import_imdb_data():
     import_actors_to_db()
     import_movies_to_db()
     import_actors_in_movies()
+
 
 import_imdb_data()

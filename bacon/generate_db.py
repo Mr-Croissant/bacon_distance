@@ -1,4 +1,12 @@
-from bacon.database import add_actor, add_actor_in_movie, add_movie, get_actor_name, get_movie_name, initialize_connection, reset_tables
+from bacon.database import (
+    add_actor,
+    add_actor_in_movie,
+    add_movie,
+    get_actor_name,
+    get_movie_name,
+    initialize_connection,
+    reset_tables,
+)
 
 
 def generate_db() -> None:

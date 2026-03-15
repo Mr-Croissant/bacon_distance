@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Optional
 
 
-
 def get_actor_name(actor_id, conn: sqlite3.Connection):
     if actor_exists(actor_id, conn):
         cur = conn.cursor()
@@ -11,6 +10,7 @@ def get_actor_name(actor_id, conn: sqlite3.Connection):
         result = cur.fetchone()[0]
         return result
     return
+
 
 def get_movie_name(movie_id, conn: sqlite3.Connection):
     if movie_exists(movie_id, conn):
@@ -26,6 +26,7 @@ def actor_exists(actor_id: str, conn: sqlite3.Connection):
     cur.execute("SELECT 1 FROM actors WHERE id = ?", (actor_id,))
     result = cur.fetchone()[0]
     return result
+
 
 def movie_exists(movie_id: str, conn: sqlite3.Connection):
     cur = conn.cursor()
@@ -53,6 +54,7 @@ def add_movie(movie_id: int, movie_name: str, conn: sqlite3.Connection):
     except Exception as e:
         print(f"An error occurred: {e}")
 
+
 def add_actor_in_movie(actor_id: int, movie_id: int, conn: sqlite3.Connection):
     cur = conn.cursor()
     try:
@@ -61,6 +63,7 @@ def add_actor_in_movie(actor_id: int, movie_id: int, conn: sqlite3.Connection):
         conn.commit()
     except Exception as e:
         print(f"An error occurred: {e}")
+
 
 def initialize_connection() -> sqlite3.Connection:
     conn = sqlite3.connect(Path(__file__).parents[1] / "bacon_distance.db", check_same_thread=False)
@@ -99,4 +102,3 @@ def reset_tables():
         """
     )
     conn.commit()
-
