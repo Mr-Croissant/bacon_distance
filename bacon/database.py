@@ -3,12 +3,26 @@ from pathlib import Path
 from typing import List
 
 
+def get_all_actors(conn: sqlite3.Connection):
+    cur = conn.cursor()
+    cur.execute("SELECT full_name FROM actors")
+    result = cur.fetchall()
+    return list(result)
+
+
+def get_actor_id(actor_name: str, conn: sqlite3.Connection):
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM actors WHERE full_name = ?", (actor_name,))
+    result = cur.fetchone()
+    return result[0] if result is not None else result
+
+
 def get_actor_name(actor_id, conn: sqlite3.Connection):
-    if actor_exists(actor_id, conn):
+    if actor_exists_by_id(actor_id, conn):
         cur = conn.cursor()
         cur.execute("SELECT full_name FROM actors WHERE id = ?", (actor_id,))
-        result = cur.fetchone()[0]
-        return result
+        result = cur.fetchone()
+        return result[0] if result is not None else result
     return
 
 
@@ -16,23 +30,30 @@ def get_movie_name(movie_id, conn: sqlite3.Connection):
     if movie_exists(movie_id, conn):
         cur = conn.cursor()
         cur.execute("SELECT movie_name FROM movies WHERE id = ?", (movie_id,))
-        result = cur.fetchone()[0]
-        return result
+        result = cur.fetchone()
+        return result[0] if result is not None else result
     return
 
 
-def actor_exists(actor_id: str, conn: sqlite3.Connection):
+def actor_exists_by_id(actor_id: str, conn: sqlite3.Connection):
     cur = conn.cursor()
     cur.execute("SELECT 1 FROM actors WHERE id = ?", (actor_id,))
-    result = cur.fetchone()[0]
-    return result
+    result = cur.fetchone()
+    return result[0] if result is not None else result
+
+
+def actor_exists_by_name(actor_name: str, conn: sqlite3.Connection):
+    cur = conn.cursor()
+    cur.execute("SELECT 1 FROM actors WHERE full_name = ?", (actor_name,))
+    result = cur.fetchone()
+    return result[0] if result is not None else result
 
 
 def movie_exists(movie_id: str, conn: sqlite3.Connection):
     cur = conn.cursor()
     cur.execute("SELECT 1 FROM movies WHERE id = ?", (movie_id,))
-    result = cur.fetchone()[0]
-    return result
+    result = cur.fetchone()
+    return result[0] if result is not None else result
 
 
 def add_actor(actor_id: int, actor_name: str, conn: sqlite3.Connection):
@@ -45,27 +66,25 @@ def add_actor(actor_id: int, actor_name: str, conn: sqlite3.Connection):
         print(f"An error occurred: {e}")
 
 
-
-def get_actors_one_degree_away(actor_id: int, conn: sqlite3.Connection) -> List[int]:
+def get_collegues(actor_id: int, conn: sqlite3.Connection) -> List[int]:
     cur = conn.cursor()
     try:
-        cur.execute("""
-            SELECT m1.actor_id
+        cur.execute(
+            """
+            SELECT DISTINCT m2.actor_id
             FROM actor_to_movie m1
-            INNER JOIN (
-                SELECT actor_id
-                FROM actor_to_movie
-                GROUP BY actor_id
-                HAVING COUNT(column_name) > 1
-            ) m2 ON m2.actor_id = ?;
-""", 
-(actor_id, ))
+            JOIN actor_to_movie AS m2 ON m2.movie_id = m1.movie_id
+            WHERE m1.actor_id = ?
+            """,
+            (actor_id,),
+        )
         results = cur.fetchall()
         results = [result[0] for result in results]
-        results.remove(actor_id)
+        results = list(filter(lambda result: result != actor_id, results))
         return results
     except Exception as e:
         print(f"An error occurred: {e}")
+
 
 def add_movie(movie_id: int, movie_name: str, conn: sqlite3.Connection):
     cur = conn.cursor()
@@ -88,7 +107,7 @@ def add_actor_in_movie(actor_id: int, movie_id: int, conn: sqlite3.Connection):
 
 
 def initialize_connection() -> sqlite3.Connection:
-    conn = sqlite3.connect(Path(__file__).parents[1] / "test.db", check_same_thread=False)
+    conn = sqlite3.connect(Path(__file__).parents[1] / "bacon_distance.db", check_same_thread=False)
     cursor = conn.cursor()
     cursor.executescript(
         """
