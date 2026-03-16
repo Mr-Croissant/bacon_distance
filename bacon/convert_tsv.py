@@ -45,6 +45,3 @@ def import_imdb_data():
     import_actors_to_db()
     import_movies_to_db()
     import_actors_in_movies()
-
-
-import_imdb_data()
