@@ -6,5 +6,5 @@ setup(
     description="bacon distance",
     author="Ely",
     packages=find_packages(),
-    install_requires=["pytest", "pandas"],
+    install_requires=["pytest", "streamlit", "pandas"],
 )

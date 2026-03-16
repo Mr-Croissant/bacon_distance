@@ -137,9 +137,9 @@ def reset_tables():
     cursor = conn.cursor()
     cursor.executescript(
         """
-        DROP TABLE actors;
-        DROP TABLE movies;
-        DROP TABLE actor_to_movie
+        DROP TABLE IF EXISTS actors;
+        DROP TABLE IF EXISTS movies;
+        DROP TABLE IF EXISTS actor_to_movie
         """
     )
     conn.commit()

@@ -11,7 +11,7 @@ from bacon.database import (
 
 conn = initialize_connection()
 
-datasets_path = Path(__file__).parent / "IMDB_dataset"
+datasets_path = Path(__file__).parents[1] / "IMDB_dataset"
 
 
 def import_actors_to_db():

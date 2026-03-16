@@ -42,3 +42,5 @@ def randomize_actors_in_movies(conn: sqlite3.Connection):
         for j in range(2):
             print("Randomizing connection: ", i, " ", j)
             add_actor_in_movie(i + 1, randint(1, NUM_RANDOM), conn)
+
+generate_db()
