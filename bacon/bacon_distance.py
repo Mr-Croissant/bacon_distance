@@ -10,24 +10,27 @@ from bacon.database import (
     initialize_connection,
 )
 
-MAX_DISTANCE = 5
-
 
 def _calculate_bacon_distance(start_actor_id: int, end_actor_id: int, conn: sqlite3.Connection) -> int:
     current_actors: Set[int] = set()
     current_actors.add(start_actor_id)
-    for current_distance in range(MAX_DISTANCE):
-        current_actors = get_all_collegues(current_actors, conn)
+    visited: Set[int] = set()
+    current_distance = 0
+    while current_actors:
+        current_actors = get_all_collegues(current_actors, visited, conn)
         if end_actor_id in current_actors:
             return current_distance + 1
+        current_distance += 1
     return -1
 
 
-def get_all_collegues(actor_ids: Set[int], conn) -> Set[int]:
+def get_all_collegues(actor_ids: Set[int], visited_actors: Set[int], conn) -> Set[int]:
     distinct_collegues = set()
     for actor_id in actor_ids:
         collegues = get_collegues(actor_id, conn)
-        distinct_collegues.update(collegues)
+        for collegue in collegues:
+            if collegue not in visited_actors:
+                distinct_collegues.add(collegue)
     return distinct_collegues
 
 
