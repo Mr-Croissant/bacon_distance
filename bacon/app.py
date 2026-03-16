@@ -31,13 +31,15 @@ def on_click_calculate(conn: sqlite3.Connection, actor1: str, actor2: str):
         st.empty()
         actor1_id = get_actor_id(actor1, conn)
         actor2_id = get_actor_id(actor2, conn)
-        bacon_distance = calculate_bacon_distance(actor1_id, actor2_id, conn)
+        bacon_distance = str(calculate_bacon_distance(actor1_id, actor2_id, conn))
+        bacon_distance = bacon_distance if bacon_distance != "-1" else "uncalculatable"
         st.badge(f"Their bacon distance is {bacon_distance}", color="green")
     else:
         st.badge("Invalid Actors", color="red", icon="🚨")
 
 
 def generate_actor_picking(conn: sqlite3.Connection):
+    st.title("Bacon Distance 🥓🥓")
     actor1 = st.text_input("Name of first actor")
     actor2 = st.text_input("Name of second actor")
     st.button("Calculate", on_click=on_click_calculate, args=[conn, actor1, actor2])

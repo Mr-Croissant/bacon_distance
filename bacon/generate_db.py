@@ -20,7 +20,6 @@ def generate_db() -> None:
     randomize_actors(conn)
     randomize_movies(conn)
     randomize_actors_in_movies(conn)
-    print(get_collegues(1, conn))
 
 
 def randomize_actors(conn: sqlite3.Connection):
@@ -41,6 +40,6 @@ def randomize_movies(conn: sqlite3.Connection):
 
 def randomize_actors_in_movies(conn: sqlite3.Connection):
     for i in range(NUM_RANDOM):
-        for j in range(10):
+        for j in range(2):
             print("Randomizing connection: ", i, " ", j)
             add_actor_in_movie(i + 1, randint(1, NUM_RANDOM), conn)
