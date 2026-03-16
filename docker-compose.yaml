@@ -1,5 +1,11 @@
 services:
-  bacon:
-    build: .
+  ui:
+    build: ./bacon_frontend
     ports:
       - 8501:8501
+    links:
+      - "server"
+  server:
+    build: ./bacon_backend
+    ports:
+      - 5000:5000

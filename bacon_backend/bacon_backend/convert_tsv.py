@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from bacon.database import (
+from bacon_backend.database import (
     add_actor,
     add_actor_in_movie,
     add_movie,
