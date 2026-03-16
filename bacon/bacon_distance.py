@@ -17,17 +17,19 @@ def calculate_bacon_distance(start_actor_id: int, end_actor_id: int, conn: sqlit
     visited: Set[int] = set()
     current_distance = 1
     while current_actors:
-        current_actors = get_all_collegues(current_actors, visited, conn)
+        next_degree_of_actors = get_all_collegues(current_actors, visited, conn)
         if end_actor_id in current_actors:
             return current_distance
         current_distance += 1
+        current_actors = next_degree_of_actors
     return -1
 
 
 def get_all_collegues(actor_ids: Set[int], visited_actors: Set[int], conn) -> Set[int]:
     distinct_collegues = set()
     for actor_id in actor_ids:
-        collegues = set(get_collegues(actor_id, conn))
+        collegues = get_collegues(actor_id, conn)
+        collegues = set(collegues) if collegues is not None else set()
         distinct_collegues.update(collegues - visited_actors)
     return distinct_collegues
 
