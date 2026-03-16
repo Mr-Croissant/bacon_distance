@@ -1,5 +1,7 @@
-from bacon.bacon_distance import get_bacon_distance_by_user_choice
-from bacon.generate_db import generate_db
+from pathlib import Path
+
+import streamlit.web.cli
 
 if __name__ == "__main__":
-    print(get_bacon_distance_by_user_choice())
+    filename = str(Path(__file__).parent / "app.py")
+    streamlit.web.cli.main_run([filename])

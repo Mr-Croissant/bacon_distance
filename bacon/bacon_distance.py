@@ -11,7 +11,7 @@ from bacon.database import (
 )
 
 
-def _calculate_bacon_distance(start_actor_id: int, end_actor_id: int, conn: sqlite3.Connection) -> int:
+def calculate_bacon_distance(start_actor_id: int, end_actor_id: int, conn: sqlite3.Connection) -> int:
     current_actors: Set[int] = set()
     current_actors.add(start_actor_id)
     visited: Set[int] = set()
@@ -50,5 +50,5 @@ def get_bacon_distance_by_user_choice() -> int:
         print("Actor: ", actor[0])
     actor1 = get_actor_choice(conn)
     actor2 = get_actor_choice(conn)
-    bacon_distance = _calculate_bacon_distance(actor1, actor2, conn)
+    bacon_distance = calculate_bacon_distance(actor1, actor2, conn)
     return bacon_distance
