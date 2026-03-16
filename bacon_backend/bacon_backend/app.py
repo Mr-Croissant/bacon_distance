@@ -1,4 +1,3 @@
-
 from flask import Flask, request
 
 from bacon_backend.bacon_distance import calculate_bacon_distance
