@@ -15,11 +15,11 @@ def _calculate_bacon_distance(start_actor_id: int, end_actor_id: int, conn: sqli
     current_actors: Set[int] = set()
     current_actors.add(start_actor_id)
     visited: Set[int] = set()
-    current_distance = 0
+    current_distance = 1
     while current_actors:
         current_actors = get_all_collegues(current_actors, visited, conn)
         if end_actor_id in current_actors:
-            return current_distance + 1
+            return current_distance
         current_distance += 1
     return -1
 
