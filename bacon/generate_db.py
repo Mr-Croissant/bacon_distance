@@ -5,7 +5,6 @@ from bacon.database import (
     add_actor,
     add_actor_in_movie,
     add_movie,
-    get_collegues,
     initialize_connection,
     reset_tables,
 )
