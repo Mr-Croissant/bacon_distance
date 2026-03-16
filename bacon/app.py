@@ -28,7 +28,6 @@ def display_100_actors(conn: sqlite3.Connection):
 
 def on_click_calculate(conn: sqlite3.Connection, actor1: str, actor2: str):
     if actor_exists_by_name(actor1, conn) and actor_exists_by_name(actor2, conn):
-        st.empty()
         actor1_id = get_actor_id(actor1, conn)
         actor2_id = get_actor_id(actor2, conn)
         bacon_distance = str(calculate_bacon_distance(actor1_id, actor2_id, conn))
