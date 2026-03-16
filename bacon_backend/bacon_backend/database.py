@@ -3,9 +3,9 @@ from pathlib import Path
 from typing import List, Optional
 
 
-def get_all_actors(conn: sqlite3.Connection):
+def get_100_actors(conn: sqlite3.Connection):
     cur = conn.cursor()
-    cur.execute("SELECT full_name FROM actors")
+    cur.execute("SELECT full_name FROM actors LIMIT 100")
     result = cur.fetchall()
     return list(result)
 
@@ -57,57 +57,56 @@ def movie_exists(movie_id: str, conn: sqlite3.Connection):
 
 
 def add_actor(actor_id: int, actor_name: str, conn: sqlite3.Connection):
-    cur = conn.cursor()
     try:
+        cur = conn.cursor()
         data = (actor_id, actor_name)
         cur.execute("INSERT INTO actors VALUES(?, ?)", data)
         conn.commit()
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    except sqlite3.IntegrityError:
+        pass
 
 
 def get_collegues(actor_id: int, conn: sqlite3.Connection) -> Optional[List[int]]:
     cur = conn.cursor()
-    try:
-        cur.execute(
-            """
-            SELECT DISTINCT m2.actor_id
-            FROM actor_to_movie m1
-            JOIN actor_to_movie AS m2 ON m2.movie_id = m1.movie_id
-            WHERE m1.actor_id = ?
-            """,
-            (actor_id,),
-        )
-        results = cur.fetchall()
-        results = [result[0] for result in results]
-        results = list(filter(lambda result: result != actor_id, results))
+    cur.execute(
+        """
+        SELECT DISTINCT m2.actor_id
+        FROM actor_to_movie m1
+        JOIN actor_to_movie AS m2 ON m2.movie_id = m1.movie_id
+        WHERE m1.actor_id = ?
+        """,
+        (actor_id,),
+    )
+    results = cur.fetchall()
+    if results is None:
         return results
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    results = [result[0] for result in results]
+    results = list(filter(lambda result: result != actor_id, results))
+    return results
 
 
 def add_movie(movie_id: int, movie_name: str, conn: sqlite3.Connection):
-    cur = conn.cursor()
     try:
+        cur = conn.cursor()
         data = (movie_id, movie_name)
         cur.execute("INSERT INTO movies VALUES(?, ?)", data)
         conn.commit()
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    except sqlite3.IntegrityError:
+        pass
 
 
 def add_actor_in_movie(actor_id: int, movie_id: int, conn: sqlite3.Connection):
-    cur = conn.cursor()
     try:
+        cur = conn.cursor()
         data = (actor_id, movie_id)
         cur.execute("INSERT INTO actor_to_movie VALUES(?, ?)", data)
         conn.commit()
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    except sqlite3.IntegrityError:
+        pass
 
 
 def initialize_connection() -> sqlite3.Connection:
-    conn = sqlite3.connect(Path(__file__).parents[1] / "bacon_distance.db", check_same_thread=False)
+    conn = sqlite3.connect(Path.cwd() / "bacon_distance.db", check_same_thread=False)
     cursor = conn.cursor()
     cursor.executescript(
         """
@@ -137,9 +136,9 @@ def reset_tables():
     cursor = conn.cursor()
     cursor.executescript(
         """
-        DROP TABLE actors;
-        DROP TABLE movies;
-        DROP TABLE actor_to_movie
+        DROP TABLE IF EXISTS actors;
+        DROP TABLE IF EXISTS movies;
+        DROP TABLE IF EXISTS actor_to_movie
         """
     )
     conn.commit()

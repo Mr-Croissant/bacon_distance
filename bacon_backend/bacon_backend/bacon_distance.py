@@ -2,10 +2,10 @@ import os
 import sqlite3
 from typing import Set
 
-from bacon.database import (
+from bacon_backend.database import (
     actor_exists_by_name,
+    get_100_actors,
     get_actor_id,
-    get_all_actors,
     get_collegues,
     initialize_connection,
 )
@@ -48,7 +48,7 @@ def get_actor_choice(conn: sqlite3.Connection) -> int:
 
 def get_bacon_distance_by_user_choice() -> int:
     conn = initialize_connection()
-    for actor in get_all_actors(conn):
+    for actor in get_100_actors(conn):
         print("Actor: ", actor[0])
     actor1 = get_actor_choice(conn)
     actor2 = get_actor_choice(conn)

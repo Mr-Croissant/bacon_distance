@@ -1,14 +1,14 @@
 import sqlite3
 from random import choice, randint
 
-from bacon.database import (
+from bacon_backend.database import (
     add_actor,
     add_actor_in_movie,
     add_movie,
     initialize_connection,
     reset_tables,
 )
-from bacon.random_strings import FIRST_NAMES, IDENTIFIERS, LAST_NAMES, OBJECTS
+from bacon_backend.random_strings import FIRST_NAMES, IDENTIFIERS, LAST_NAMES, OBJECTS
 
 NUM_RANDOM = 100
 
@@ -42,3 +42,6 @@ def randomize_actors_in_movies(conn: sqlite3.Connection):
         for j in range(2):
             print("Randomizing connection: ", i, " ", j)
             add_actor_in_movie(i + 1, randint(1, NUM_RANDOM), conn)
+
+
+generate_db()

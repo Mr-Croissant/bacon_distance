@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from bacon.database import (
+from bacon_backend.database import (
     add_actor,
     add_actor_in_movie,
     add_movie,
@@ -11,7 +11,7 @@ from bacon.database import (
 
 conn = initialize_connection()
 
-datasets_path = Path(__file__).parent / "IMDB_dataset"
+datasets_path = Path(__file__).parents[1] / "IMDB_dataset"
 
 
 def import_actors_to_db():
