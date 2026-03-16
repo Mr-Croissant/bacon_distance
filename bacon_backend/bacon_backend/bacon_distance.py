@@ -4,8 +4,8 @@ from typing import Set
 
 from bacon_backend.database import (
     actor_exists_by_name,
-    get_actor_id,
     get_100_actors,
+    get_actor_id,
     get_collegues,
     initialize_connection,
 )

@@ -94,6 +94,7 @@ def add_movie(movie_id: int, movie_name: str, conn: sqlite3.Connection):
     except sqlite3.IntegrityError:
         pass
 
+
 def add_actor_in_movie(actor_id: int, movie_id: int, conn: sqlite3.Connection):
     try:
         cur = conn.cursor()
