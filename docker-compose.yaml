@@ -19,3 +19,10 @@ services:
       RABBITMQ_DEFAULT_PASS: pass
   consumer:
     build: ./bacon_consumer
+  database:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: database
+    ports:
+      - "3306:3306"
