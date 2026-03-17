@@ -1,23 +1,23 @@
-import sqlite3
+import mysql.connector
 from pathlib import Path
 from typing import List, Optional
+import sqlite3
 
-
-def get_100_actors(conn: sqlite3.Connection):
+def get_100_actors(conn: mysql.connector.connection.MySQLConnection):
     cur = conn.cursor()
     cur.execute("SELECT full_name FROM actors LIMIT 100")
     result = cur.fetchall()
     return list(result)
 
 
-def get_actor_id(actor_name: str, conn: sqlite3.Connection):
+def get_actor_id(actor_name: str, conn: mysql.connector.connection.MySQLConnection):
     cur = conn.cursor()
     cur.execute("SELECT id FROM actors WHERE full_name = ?", (actor_name,))
     result = cur.fetchone()
     return result[0] if result is not None else result
 
 
-def get_actor_name(actor_id, conn: sqlite3.Connection):
+def get_actor_name(actor_id, conn: mysql.connector.connection.MySQLConnection):
     if actor_exists_by_id(actor_id, conn):
         cur = conn.cursor()
         cur.execute("SELECT full_name FROM actors WHERE id = ?", (actor_id,))
@@ -26,7 +26,7 @@ def get_actor_name(actor_id, conn: sqlite3.Connection):
     return
 
 
-def get_movie_name(movie_id, conn: sqlite3.Connection):
+def get_movie_name(movie_id, conn: mysql.connector.connection.MySQLConnection):
     if movie_exists(movie_id, conn):
         cur = conn.cursor()
         cur.execute("SELECT movie_name FROM movies WHERE id = ?", (movie_id,))
@@ -35,28 +35,28 @@ def get_movie_name(movie_id, conn: sqlite3.Connection):
     return
 
 
-def actor_exists_by_id(actor_id: str, conn: sqlite3.Connection):
+def actor_exists_by_id(actor_id: str, conn: mysql.connector.connection.MySQLConnection):
     cur = conn.cursor()
     cur.execute("SELECT 1 FROM actors WHERE id = ?", (actor_id,))
     result = cur.fetchone()
     return result[0] if result is not None else result
 
 
-def actor_exists_by_name(actor_name: str, conn: sqlite3.Connection):
+def actor_exists_by_name(actor_name: str, conn: mysql.connector.connection.MySQLConnection):
     cur = conn.cursor()
     cur.execute("SELECT 1 FROM actors WHERE full_name = ?", (actor_name,))
     result = cur.fetchone()
     return result[0] if result is not None else result
 
 
-def movie_exists(movie_id: str, conn: sqlite3.Connection):
+def movie_exists(movie_id: str, conn: mysql.connector.connection.MySQLConnection):
     cur = conn.cursor()
     cur.execute("SELECT 1 FROM movies WHERE id = ?", (movie_id,))
     result = cur.fetchone()
     return result[0] if result is not None else result
 
 
-def add_actor(actor_id: int, actor_name: str, conn: sqlite3.Connection):
+def add_actor(actor_id: int, actor_name: str, conn: mysql.connector.connection.MySQLConnection):
     try:
         cur = conn.cursor()
         data = (actor_id, actor_name)
@@ -66,7 +66,7 @@ def add_actor(actor_id: int, actor_name: str, conn: sqlite3.Connection):
         pass
 
 
-def get_collegues(actor_id: int, conn: sqlite3.Connection) -> Optional[List[int]]:
+def get_collegues(actor_id: int, conn: mysql.connector.connection.MySQLConnection) -> Optional[List[int]]:
     cur = conn.cursor()
     cur.execute(
         """
@@ -85,7 +85,7 @@ def get_collegues(actor_id: int, conn: sqlite3.Connection) -> Optional[List[int]
     return results
 
 
-def add_movie(movie_id: int, movie_name: str, conn: sqlite3.Connection):
+def add_movie(movie_id: int, movie_name: str, conn: mysql.connector.connection.MySQLConnection):
     try:
         cur = conn.cursor()
         data = (movie_id, movie_name)
@@ -95,7 +95,7 @@ def add_movie(movie_id: int, movie_name: str, conn: sqlite3.Connection):
         pass
 
 
-def add_actor_in_movie(actor_id: int, movie_id: int, conn: sqlite3.Connection):
+def add_actor_in_movie(actor_id: int, movie_id: int, conn: mysql.connector.connection.MySQLConnection):
     try:
         cur = conn.cursor()
         data = (actor_id, movie_id)
@@ -105,8 +105,15 @@ def add_actor_in_movie(actor_id: int, movie_id: int, conn: sqlite3.Connection):
         pass
 
 
-def initialize_connection() -> sqlite3.Connection:
-    conn = sqlite3.connect(Path.cwd() / "bacon_distance.db", check_same_thread=False)
+def initialize_connection():
+    while True:
+        try:
+            conn = mysql.connector.connect(user="ely", database="database", host="database")
+            if conn:
+                break
+        except mysql.connector.errors.DatabaseError:
+            pass
+    print("CONNECTED!!!!")
     cursor = conn.cursor()
     cursor.executescript(
         """
