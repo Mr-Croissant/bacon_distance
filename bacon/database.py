@@ -1,6 +1,6 @@
 import sqlite3
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 
 def get_all_actors(conn: sqlite3.Connection):
@@ -66,7 +66,7 @@ def add_actor(actor_id: int, actor_name: str, conn: sqlite3.Connection):
         print(f"An error occurred: {e}")
 
 
-def get_collegues(actor_id: int, conn: sqlite3.Connection) -> List[int]:
+def get_collegues(actor_id: int, conn: sqlite3.Connection) -> Optional[List[int]]:
     cur = conn.cursor()
     try:
         cur.execute(
