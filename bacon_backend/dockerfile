@@ -13,8 +13,8 @@ COPY bacon_backend/ ./bacon_backend/
 
 RUN pip install .
 RUN chmod 777 -R bacon_backend
-RUN python bacon_backend/generate_db.py
+# RUN python bacon_backend/generate_db.py
 
 ENV FLASK_APP /usr/bacon_backend/bacon_backend/app.py
 
-CMD ["flask", "run", "--host", "0.0.0.0"]
+CMD ["sh", "-c", "python bacon_backend/generate_db.py ; flask run --host 0.0.0.0"]
