@@ -4,8 +4,12 @@ from bacon_backend.bacon_distance import calculate_bacon_distance
 from bacon_backend.database import (
     actor_exists_by_id,
     actor_exists_by_name,
+    add_actor,
+    add_movie,
     get_100_actors,
     get_actor_id,
+    get_next_actor_id,
+    get_next_movie_id,
     initialize_connection,
 )
 
@@ -45,3 +49,15 @@ def request_bacon_distance():
     actor2_id = request.json["actor2_id"]
     bacon_distance = calculate_bacon_distance(actor1_id, actor2_id, conn)
     return {"bacon_distance": bacon_distance}
+
+
+@app.post("/movie/new")
+def add_new_movie():
+    movie_name = request.json["name"]
+    actors = request.json["actors"]
+    add_movie(get_next_movie_id(conn), movie_name, conn)
+    current_actor_id = get_next_actor_id(conn)
+    for actor in actors:
+        add_actor(current_actor_id, actor, conn)
+        current_actor_id += 1
+    return "", 200

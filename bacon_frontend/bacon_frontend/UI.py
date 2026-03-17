@@ -1,4 +1,3 @@
-import os
 from typing import Any, Dict
 
 import requests
@@ -12,6 +11,7 @@ ACTOR_EXISTS_ENDPOINT = "/actor/exists"
 GET_ACTOR_ID_ENDPOINT = "/actor/id"
 FIRST_100_ACTORS_ENDPOINT = "/actor/100"
 BACON_DISTANCE_ENDPOINT = "/bacon_distance"
+
 
 def display_100_actors():
     st.divider()

@@ -1,0 +1,14 @@
+FROM python:3.12-slim
+
+RUN mkdir /usr/bacon_publisher/
+
+WORKDIR /usr/bacon_publisher/
+
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
+
+COPY bacon_publisher/ ./bacon_publisher/
+RUN chmod 777 -R bacon_publisher
+
+
+CMD ["python", "/usr/bacon_publisher/bacon_publisher/publisher.py"]
