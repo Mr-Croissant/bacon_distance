@@ -13,9 +13,6 @@ GET_ACTOR_ID_ENDPOINT = "/actor/id"
 FIRST_100_ACTORS_ENDPOINT = "/actor/100"
 BACON_DISTANCE_ENDPOINT = "/bacon_distance"
 
-print(os.environ)
-
-
 def display_100_actors():
     st.divider()
     st.title("Current actors!")

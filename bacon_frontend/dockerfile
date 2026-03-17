@@ -7,11 +7,7 @@ WORKDIR /usr/bacon_frontend/
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-COPY setup.py ./
 COPY bacon_frontend/ ./bacon_frontend/
-
-
-RUN pip install .
 RUN chmod 777 -R bacon_frontend
 
 CMD ["streamlit", "run", "--server.address", "0.0.0.0", "/usr/bacon_frontend/bacon_frontend/UI.py"]
