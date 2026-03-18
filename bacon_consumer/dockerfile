@@ -1,0 +1,14 @@
+FROM python:3.12-slim
+
+RUN mkdir /usr/bacon_consumer/
+
+WORKDIR /usr/bacon_consumer/
+
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
+
+COPY bacon_consumer/ ./bacon_consumer/
+RUN chmod 777 -R bacon_consumer
+
+
+CMD ["python", "/usr/bacon_consumer/bacon_consumer/consumer.py"]

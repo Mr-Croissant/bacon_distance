@@ -9,3 +9,21 @@ services:
     build: ./bacon_backend
     ports:
       - 5000:5000
+    environment:
+      PYTHONUNBUFFERED: 1
+  queue:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: pass
+  consumer:
+    build: ./bacon_consumer
+    environment:
+      PYTHONUNBUFFERED: 1
+  publisher:
+    build: ./bacon_publisher
+    environment:
+      PYTHONUNBUFFERED: 1

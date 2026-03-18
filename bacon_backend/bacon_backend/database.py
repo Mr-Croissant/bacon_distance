@@ -56,6 +56,20 @@ def movie_exists(movie_id: str, conn: sqlite3.Connection):
     return result[0] if result is not None else result
 
 
+def get_next_movie_id(conn: sqlite3.Connection):
+    cur = conn.cursor()
+    cur.execute("SELECT MAX(id) FROM actors")
+    result = cur.fetchone()
+    return result[0] + 1 if result is not None else 1
+
+
+def get_next_actor_id(conn: sqlite3.Connection):
+    cur = conn.cursor()
+    cur.execute("SELECT MAX(id) FROM movies")
+    result = cur.fetchone()
+    return result[0] + 1 if result is not None else 1
+
+
 def add_actor(actor_id: int, actor_name: str, conn: sqlite3.Connection):
     try:
         cur = conn.cursor()
