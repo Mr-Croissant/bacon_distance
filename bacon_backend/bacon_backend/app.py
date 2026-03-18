@@ -5,6 +5,7 @@ from bacon_backend.database import (
     actor_exists_by_id,
     actor_exists_by_name,
     add_actor,
+    add_actor_in_movie,
     add_movie,
     get_100_actors,
     get_actor_id,
@@ -42,6 +43,13 @@ def return_100_actors():
     first_100_actors = get_100_actors(conn)
     return {"actors": first_100_actors}
 
+@app.post("/actor/new")
+def add_new_actor():
+    actor_name = request.json["name"]
+    actor_id = request.json["actor_id"]
+    add_actor(actor_id, actor_name, conn)
+    return "", 200
+
 
 @app.get("/bacon_distance")
 def request_bacon_distance():
@@ -54,10 +62,10 @@ def request_bacon_distance():
 @app.post("/movie/new")
 def add_new_movie():
     movie_name = request.json["name"]
-    actors = request.json["actors"]
-    add_movie(get_next_movie_id(conn), movie_name, conn)
-    current_actor_id = get_next_actor_id(conn)
-    for actor in actors:
-        add_actor(current_actor_id, actor, conn)
-        current_actor_id += 1
+    movie_id = request.json["movie_id"]
+    actor_ids = request.json["actors"]
+    add_movie(movie_id, movie_name, conn)
+    for actor_id in actor_ids:
+        add_actor_in_movie(actor_id, movie_id, conn)
     return "", 200
+
