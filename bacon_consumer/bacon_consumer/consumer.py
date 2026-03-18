@@ -28,11 +28,14 @@ def send_update_to_server(ch, method, properties, body, endpoint):
     if response.status_code == 200:
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
+
 def send_new_movie(ch, method, properties, body):
     send_update_to_server(ch, method, properties, body, NEW_MOVIE_ENDPOINT)
 
+
 def send_new_actor(ch, method, properties, body):
     send_update_to_server(ch, method, properties, body, NEW_ACTOR_ENDPOINT)
+
 
 channel.basic_consume(queue="new_movies", on_message_callback=send_new_movie)
 channel.basic_consume(queue="new_actors", on_message_callback=send_new_actor)

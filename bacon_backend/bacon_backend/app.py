@@ -9,8 +9,6 @@ from bacon_backend.database import (
     add_movie,
     get_100_actors,
     get_actor_id,
-    get_next_actor_id,
-    get_next_movie_id,
     initialize_connection,
 )
 
@@ -43,6 +41,7 @@ def return_100_actors():
     first_100_actors = get_100_actors(conn)
     return {"actors": first_100_actors}
 
+
 @app.post("/actor/new")
 def add_new_actor():
     actor_name = request.json["name"]
@@ -68,4 +67,3 @@ def add_new_movie():
     for actor_id in actor_ids:
         add_actor_in_movie(actor_id, movie_id, conn)
     return "", 200
-
